@@ -2,4 +2,4 @@
 
 Oppslagsark for Intro ved GET Academy.
 
-- [Solution, prosjekt og namespace](https://kenneth-jakobsen.github.io/intro-cheatsheets/) (emne 3, C#)
+- [Solution, prosjekt og namespace](https://kenneth-jakobsen.github.io/csCheatsSheet/) (emne 3, C#)
