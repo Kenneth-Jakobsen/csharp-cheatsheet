@@ -212,7 +212,7 @@
   <section aria-labelledby="huske">
     <h2 id="huske">Fire ting å huske</h2>
     <ul class="rules">
-      <li><strong>Solution er en fil, ikke en mappe.</strong> Rider viser bare prosjektene som står i lista i <code>.slnx</code>. Ligger en prosjektmappe der uten å stå i lista, ser du den ikke.</li>
+      <li><strong>Solution er en fil, ikke en mappe.</strong> Rider og Visual Studio viser bare prosjektene som står i lista i <code>.slnx</code>. Ligger en prosjektmappe der uten å stå i lista, ser du den ikke.</li>
       <li><strong>Ett prosjekt per mappe.</strong> Et prosjekt tar med alle <code>.cs</code>-filer i mappa si og undermappene. Legger du to prosjekter i samme mappe, får det ene med seg koden til det andre.</li>
       <li><strong>Namespace gir ikke tilgang.</strong> For å bruke en klasse fra et annet prosjekt trenger du først en <em>prosjektreferanse</em>, deretter <code>using</code>. Namespace alene er ikke nok.</li>
       <li><strong>Commit nytt prosjekt med en gang.</strong> Det Git ikke har sett, kan Git ikke hente tilbake.</li>
@@ -224,15 +224,15 @@
     <p>Kjør terminalkommandoene fra mappa der solution-fila ligger.</p>
     <div class="table-wrap">
       <table>
-        <thead><tr><th>Hva</th><th>Terminal</th><th>Rider</th></tr></thead>
+        <thead><tr><th>Hva</th><th>Terminal</th><th>Rider</th><th>Visual Studio</th></tr></thead>
         <tbody>
-          <tr><td>Lage solution</td><td><code>dotnet new sln -n Emne3</code></td><td>File → New Solution</td></tr>
-          <tr><td>Lage prosjekt</td><td><code>dotnet new console -n Gjettespill</code></td><td>Høyreklikk solution → Add → New Project</td></tr>
-          <tr><td>Legge prosjekt i solution</td><td><code>dotnet sln add Gjettespill</code></td><td>Høyreklikk solution → Add → Existing Project</td></tr>
-          <tr><td>Ta prosjekt ut av solution</td><td><code>dotnet sln remove Gjettespill</code></td><td>Høyreklikk prosjektet → Remove</td></tr>
-          <tr><td>Legge til referanse</td><td><code>dotnet add RockPaperScissors reference Demo</code></td><td>Høyreklikk prosjektet → Add → Reference</td></tr>
-          <tr><td>Fjerne referanse</td><td><code>dotnet remove RockPaperScissors reference Demo</code></td><td>Dependencies → Projects → høyreklikk → Remove</td></tr>
-          <tr><td>Bygge alt</td><td><code>dotnet build</code></td><td>Build → Build Solution</td></tr>
+          <tr><td>Lage solution</td><td><code>dotnet new sln -n Emne3</code></td><td>File → New Solution</td><td>File → New → Project (solution lages samtidig), eller malen Blank Solution</td></tr>
+          <tr><td>Lage prosjekt</td><td><code>dotnet new console -n Gjettespill</code></td><td>Høyreklikk solution → Add → New Project</td><td>Høyreklikk solution → Add → New Project</td></tr>
+          <tr><td>Legge prosjekt i solution</td><td><code>dotnet sln add Gjettespill</code></td><td>Høyreklikk solution → Add → Existing Project</td><td>Høyreklikk solution → Add → Existing Project</td></tr>
+          <tr><td>Ta prosjekt ut av solution</td><td><code>dotnet sln remove Gjettespill</code></td><td>Høyreklikk prosjektet → Remove</td><td>Høyreklikk prosjektet → Remove</td></tr>
+          <tr><td>Legge til referanse</td><td><code>dotnet add RockPaperScissors reference Demo</code></td><td>Høyreklikk prosjektet → Add → Reference</td><td>Høyreklikk prosjektet → Add → Project Reference</td></tr>
+          <tr><td>Fjerne referanse</td><td><code>dotnet remove RockPaperScissors reference Demo</code></td><td>Dependencies → Projects → høyreklikk → Remove</td><td>Dependencies → Projects → høyreklikk → Remove</td></tr>
+          <tr><td>Bygge alt</td><td><code>dotnet build</code></td><td>Build → Build Solution</td><td>Build → Build Solution (<code>Ctrl+Shift+B</code>)</td></tr>
         </tbody>
       </table>
     </div>
@@ -244,10 +244,10 @@
       <table>
         <thead><tr><th>Du ser</th><th>Det betyr</th><th>Gjør dette</th></tr></thead>
         <tbody>
-          <tr><td><strong>load failed</strong> i Rider</td><td>Solution-fila peker på en <code>.csproj</code> som ikke finnes der</td><td>Sjekk stien i <code>.slnx</code>, eller fjern prosjektet og legg det til på nytt</td></tr>
+          <tr><td><strong>load failed</strong> i Rider, <strong>unavailable</strong> i Visual Studio</td><td>Solution-fila peker på en <code>.csproj</code> som ikke finnes der</td><td>Sjekk stien i <code>.slnx</code>, eller fjern prosjektet og legg det til på nytt</td></tr>
           <tr><td><code>The type or namespace name 'Player' could not be found</code></td><td>Prosjektet ditt vet ikke om klassen</td><td>Legg til prosjektreferanse og <code>using</code></td></tr>
           <tr><td><code>Program has more than one entry point defined</code></td><td>To <code>Main</code> i samme prosjekt, ofte fordi to prosjekter deler mappe</td><td>Gi hvert prosjekt sin egen mappe</td></tr>
-          <tr><td><code>The process cannot access the file …</code> ved rename</td><td>Mappa er i bruk, ofte av Rider selv</td><td>Lukk solution, endre navn i Utforsker, åpne igjen</td></tr>
+          <tr><td><code>The process cannot access the file …</code> ved rename</td><td>Mappa er i bruk, ofte av Rider eller Visual Studio selv</td><td>Lukk solution, endre navn i Utforsker, åpne igjen</td></tr>
         </tbody>
       </table>
     </div>
@@ -267,7 +267,7 @@
       </details>
       <details>
         <summary>Du sletter linja med Demo fra <code>.slnx</code>. Hva skjer med koden i <code>Demo/</code>?</summary>
-        <p>Ingenting. Filene ligger der fortsatt. Prosjektet vises bare ikke i Rider lenger, fordi det ikke står i lista.</p>
+        <p>Ingenting. Filene ligger der fortsatt. Prosjektet vises bare ikke i Rider eller Visual Studio lenger, fordi det ikke står i lista.</p>
       </details>
     </div>
   </section>
