@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Solution, prosjekt og namespace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: én smal lesekolonne; de tre begrepene har hver sin farge som går igjen i kort, tegning og tabeller */
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --fg: #1d2330;
+    --muted: #5a6273;
+    --line: #d9dde5;
+    --sol: #3b5bdb;      /* solution */
+    --sol-soft: #e8edff;
+    --proj: #0f8a6c;     /* prosjekt */
+    --proj-soft: #e1f4ee;
+    --ns: #b25e09;       /* namespace */
+    --ns-soft: #fcefdc;
+    --code-bg: #eef0f4;
+    --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+    --font-body: "Inter", "Segoe UI", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", Consolas, "Courier New", monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12151c; --surface: #1a1e27; --fg: #e6e9ef; --muted: #9aa2b2; --line: #2e3442;
+      --sol: #8ea4ff; --sol-soft: #232b48; --proj: #4fd1a8; --proj-soft: #17332b;
+      --ns: #f2a64a; --ns-soft: #3a2a14; --code-bg: #222734; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12151c; --surface: #1a1e27; --fg: #e6e9ef; --muted: #9aa2b2; --line: #2e3442;
+    --sol: #8ea4ff; --sol-soft: #232b48; --proj: #4fd1a8; --proj-soft: #17332b;
+    --ns: #f2a64a; --ns-soft: #3a2a14; --code-bg: #222734; color-scheme: dark;
+  }
+
+  body {
+    margin: 0;
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-body); font-size: 16px; line-height: 1.6;
+  }
+  .page {
+    max-width: 860px; margin: 0 auto;
+    padding-block: 40px 56px;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    display: grid; gap: 40px;
+  }
+  h1, h2, h3 { font-family: var(--font-display); line-height: 1.2; text-wrap: balance; margin: 0; }
+  h1 { font-size: 2.1rem; }
+  h2 { font-size: 1.45rem; margin-bottom: 12px; }
+  h3 { font-size: 1.1rem; }
+  p { margin: 0; max-width: 65ch; }
+  section { display: grid; gap: 12px; min-width: 0; }
+  code, pre { font-family: var(--font-mono); font-size: 0.88em; }
+  code { background: var(--code-bg); padding: 1px 5px; border-radius: 4px; }
+  .lead { color: var(--muted); font-size: 1.08rem; }
+  header { display: grid; gap: 10px; }
+  .eyebrow { font-size: 0.78rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+
+  /* Tre kort */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 16px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--line); border-top: 4px solid var(--c);
+    border-radius: 8px; padding: 18px; display: grid; gap: 8px; align-content: start; min-width: 0;
+  }
+  .card h3 { color: var(--c); }
+  .card .q { font-style: italic; }
+  .card dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; font-size: 0.92rem; }
+  .card dt { color: var(--muted); }
+  .card dd { margin: 0; min-width: 0; }
+  .sol { --c: var(--sol); } .proj { --c: var(--proj); } .ns { --c: var(--ns); }
+
+  /* Tegning */
+  .figure { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 16px; overflow-x: auto; }
+  .figure svg { display: block; width: 100%; min-width: 600px; height: auto; }
+  .figure figcaption { color: var(--muted); font-size: 0.9rem; margin-top: 10px; }
+  figure { margin: 0; }
+  svg text { font-family: var(--font-body); fill: var(--fg); }
+  svg .mono { font-family: var(--font-mono); }
+  svg .muted { fill: var(--muted); }
+  svg .t-sol { fill: var(--sol); } svg .t-proj { fill: var(--proj); } svg .t-ns { fill: var(--ns); }
+  svg .disk { fill: none; stroke: var(--muted); stroke-dasharray: 6 5; }
+  svg .box-sol { fill: var(--sol-soft); stroke: var(--sol); stroke-width: 2; }
+  svg .box-proj { fill: var(--proj-soft); stroke: var(--proj); stroke-width: 2; }
+  svg .box-file { fill: var(--surface); stroke: var(--line); }
+  svg .pill-ns { fill: var(--ns-soft); stroke: var(--ns); }
+  svg .arrow-sol { stroke: var(--sol); stroke-width: 2; fill: none; }
+  svg .arrow-ref { stroke: var(--muted); stroke-width: 2; fill: none; stroke-dasharray: 5 4; }
+  svg .head-sol { fill: var(--sol); } svg .head-ref { fill: var(--muted); }
+
+  /* Tabeller */
+  .table-wrap { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; }
+  table { border-collapse: collapse; width: 100%; font-size: 0.94rem; }
+  th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  th { font-family: var(--font-display); font-weight: 500; color: var(--muted); font-size: 0.85rem; letter-spacing: 0.03em; }
+  td code { white-space: nowrap; }
+
+  .rules { display: grid; gap: 10px; padding: 0; margin: 0; list-style: none; }
+  .rules li { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; }
+
+  details { background: var(--surface); border: 1px solid var(--line); border-radius: 8px; padding: 12px 16px; }
+  details + details { margin-top: 10px; }
+  summary { cursor: pointer; font-weight: 500; }
+  summary:focus-visible { outline: 2px solid var(--sol); outline-offset: 3px; border-radius: 4px; }
+  details p { margin-top: 10px; color: var(--muted); }
+
+  .source { color: var(--muted); font-size: 0.85rem; border-top: 1px solid var(--line); padding-top: 14px; }
+</style>
+
+</head>
+<body>
+<div class="page">
+  <header>
+    <div class="eyebrow">Emne 3 · C# · Cheatsheet</div>
+    <h1>Solution, prosjekt og namespace</h1>
+    <p class="lead">Tre ord som ofte blandes sammen. De svarer på tre forskjellige spørsmål, og bare ett av dem har med koden din å gjøre.</p>
+  </header>
+
+  <section aria-labelledby="kort">
+    <h2 id="kort">Kort fortalt</h2>
+    <div class="cards">
+      <article class="card sol">
+        <h3>Solution</h3>
+        <p class="q">Hvilke prosjekter jobber jeg med samtidig?</p>
+        <p>En <strong>innholdsfortegnelse</strong>: en liste over prosjekter. Den bygger ingenting selv.</p>
+        <dl><dt>Fil</dt><dd><code>.slnx</code> (eldre: <code>.sln</code>)</dd><dt>Antall</dt><dd>Én per repo, som regel</dd></dl>
+      </article>
+      <article class="card proj">
+        <h3>Prosjekt</h3>
+        <p class="q">Hva blir til ett program?</p>
+        <p>Det som faktisk <strong>bygges og kjøres</strong>. Et konsollprosjekt blir én <code>.exe</code> med sin egen <code>Main</code>.</p>
+        <dl><dt>Fil</dt><dd><code>.csproj</code> + egen mappe</dd><dt>Antall</dt><dd>Så mange du vil i én solution</dd></dl>
+      </article>
+      <article class="card ns">
+        <h3>Namespace</h3>
+        <p class="q">Hva heter klassen fullt ut?</p>
+        <p>Et <strong>navn i koden</strong> som grupperer klasser, så to klasser med samme navn ikke kolliderer.</p>
+        <dl><dt>Står i</dt><dd>Øverst i <code>.cs</code>-fila</dd><dt>Eksempel</dt><dd><code>Demo.Player</code></dd></dl>
+      </article>
+    </div>
+  </section>
+
+  <section aria-labelledby="tegning">
+    <h2 id="tegning">Slik henger det sammen</h2>
+    <figure class="figure">
+      <svg viewBox="0 0 760 480" role="img" aria-labelledby="svg-title svg-desc">
+        <title id="svg-title">Solution, prosjekter og namespace i mappa Emne3</title>
+        <desc id="svg-desc">Mappa Emne3 inneholder solution-fila Emne3.slnx, som lister opp to prosjekter: Demo og RockPaperScissors. Demo har filene Program.cs og Player.cs, begge med namespace Demo. RockPaperScissors har Program.cs med namespace RockPaperScissors. En stiplet pil viser at RockPaperScissors trenger en prosjektreferanse og using Demo for å bruke Player.</desc>
+        <defs>
+          <marker id="head-sol" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head-sol" d="M0,0 L10,5 L0,10 z"/></marker>
+          <marker id="head-ref" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path class="head-ref" d="M0,0 L10,5 L0,10 z"/></marker>
+        </defs>
+
+        <rect class="disk" x="10" y="30" width="740" height="440" rx="10"/>
+        <text x="22" y="20" class="muted" font-size="14">Emne3/  ← bare en vanlig mappe på disken</text>
+
+        <rect class="box-sol" x="220" y="48" width="320" height="104" rx="8"/>
+        <text x="238" y="74" class="t-sol mono" font-size="16" font-weight="500">Emne3.slnx</text>
+        <text x="372" y="74" class="muted" font-size="13">solution = liste</text>
+        <text x="238" y="104" class="mono" font-size="13">• Demo/Demo.csproj</text>
+        <text x="238" y="130" class="mono" font-size="13">• RockPaperScissors/RockPaperScissors.csproj</text>
+
+        <path class="arrow-sol" d="M300,152 C300,180 200,176 195,204" marker-end="url(#head-sol)"/>
+        <path class="arrow-sol" d="M460,152 C460,180 560,176 565,204" marker-end="url(#head-sol)"/>
+        <text x="380" y="190" class="t-sol" font-size="12" text-anchor="middle">peker på</text>
+
+        <!-- Prosjekt Demo -->
+        <rect class="box-proj" x="30" y="208" width="330" height="248" rx="8"/>
+        <text x="46" y="234" class="t-proj mono" font-size="15" font-weight="500">Demo/Demo.csproj</text>
+        <text x="46" y="254" class="muted" font-size="13">prosjekt → bygges til Demo.exe</text>
+
+        <rect class="box-file" x="46" y="268" width="298" height="82" rx="6"/>
+        <text x="60" y="290" class="mono" font-size="13" font-weight="500">Program.cs</text>
+        <rect class="pill-ns" x="60" y="300" width="128" height="22" rx="11"/>
+        <text x="124" y="315" class="t-ns mono" font-size="12" text-anchor="middle">namespace Demo</text>
+        <text x="60" y="340" class="mono muted" font-size="12">class Program { Main … }</text>
+
+        <rect class="box-file" x="46" y="362" width="298" height="82" rx="6"/>
+        <text x="60" y="384" class="mono" font-size="13" font-weight="500">Player.cs</text>
+        <rect class="pill-ns" x="60" y="394" width="128" height="22" rx="11"/>
+        <text x="124" y="409" class="t-ns mono" font-size="12" text-anchor="middle">namespace Demo</text>
+        <text x="60" y="434" class="mono muted" font-size="12">public class Player { … }</text>
+
+        <!-- Prosjekt RockPaperScissors -->
+        <rect class="box-proj" x="400" y="208" width="330" height="248" rx="8"/>
+        <text x="416" y="234" class="t-proj mono" font-size="15" font-weight="500">RockPaperScissors/…csproj</text>
+        <text x="416" y="254" class="muted" font-size="13">prosjekt → RockPaperScissors.exe</text>
+
+        <rect class="box-file" x="416" y="268" width="298" height="82" rx="6"/>
+        <text x="430" y="290" class="mono" font-size="13" font-weight="500">Program.cs</text>
+        <rect class="pill-ns" x="430" y="300" width="214" height="22" rx="11"/>
+        <text x="537" y="315" class="t-ns mono" font-size="12" text-anchor="middle">namespace RockPaperScissors</text>
+        <text x="430" y="340" class="mono muted" font-size="12">class Program { Main … }</text>
+
+        <text x="430" y="384" font-size="13" font-weight="600">Vil bruke Player fra Demo?</text>
+        <text x="430" y="406" font-size="13">1. prosjektreferanse til Demo</text>
+        <text x="430" y="426" font-size="13">2. <tspan class="mono t-ns">using Demo;</tspan> øverst i fila</text>
+
+        <path class="arrow-ref" d="M412,400 L366,400" marker-end="url(#head-ref)"/>
+      </svg>
+      <figcaption>Blått er solution, grønt er prosjekt, oransje er namespace. To klasser som heter <code>Program</code> krasjer ikke, fordi de ligger i hvert sitt prosjekt og hvert sitt namespace.</figcaption>
+    </figure>
+  </section>
+
+  <section aria-labelledby="huske">
+    <h2 id="huske">Fire ting å huske</h2>
+    <ul class="rules">
+      <li><strong>Solution er en fil, ikke en mappe.</strong> Rider viser bare prosjektene som står i lista i <code>.slnx</code>. Ligger en prosjektmappe der uten å stå i lista, ser du den ikke.</li>
+      <li><strong>Ett prosjekt per mappe.</strong> Et prosjekt tar med alle <code>.cs</code>-filer i mappa si og undermappene. Legger du to prosjekter i samme mappe, får det ene med seg koden til det andre.</li>
+      <li><strong>Namespace gir ikke tilgang.</strong> For å bruke en klasse fra et annet prosjekt trenger du først en <em>prosjektreferanse</em>, deretter <code>using</code>. Namespace alene er ikke nok.</li>
+      <li><strong>Commit nytt prosjekt med en gang.</strong> Det Git ikke har sett, kan Git ikke hente tilbake.</li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="kommandoer">
+    <h2 id="kommandoer">Kommandoer</h2>
+    <p>Kjør terminalkommandoene fra mappa der solution-fila ligger.</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Hva</th><th>Terminal</th><th>Rider</th></tr></thead>
+        <tbody>
+          <tr><td>Lage solution</td><td><code>dotnet new sln -n Emne3</code></td><td>File → New Solution</td></tr>
+          <tr><td>Lage prosjekt</td><td><code>dotnet new console -n Gjettespill</code></td><td>Høyreklikk solution → Add → New Project</td></tr>
+          <tr><td>Legge prosjekt i solution</td><td><code>dotnet sln add Gjettespill</code></td><td>Høyreklikk solution → Add → Existing Project</td></tr>
+          <tr><td>Ta prosjekt ut av solution</td><td><code>dotnet sln remove Gjettespill</code></td><td>Høyreklikk prosjektet → Remove</td></tr>
+          <tr><td>Legge til referanse</td><td><code>dotnet add RockPaperScissors reference Demo</code></td><td>Høyreklikk prosjektet → Add → Reference</td></tr>
+          <tr><td>Fjerne referanse</td><td><code>dotnet remove RockPaperScissors reference Demo</code></td><td>Dependencies → Projects → høyreklikk → Remove</td></tr>
+          <tr><td>Bygge alt</td><td><code>dotnet build</code></td><td>Build → Build Solution</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="feil">
+    <h2 id="feil">Feil du kommer til å se</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Du ser</th><th>Det betyr</th><th>Gjør dette</th></tr></thead>
+        <tbody>
+          <tr><td><strong>load failed</strong> i Rider</td><td>Solution-fila peker på en <code>.csproj</code> som ikke finnes der</td><td>Sjekk stien i <code>.slnx</code>, eller fjern prosjektet og legg det til på nytt</td></tr>
+          <tr><td><code>The type or namespace name 'Player' could not be found</code></td><td>Prosjektet ditt vet ikke om klassen</td><td>Legg til prosjektreferanse og <code>using</code></td></tr>
+          <tr><td><code>Program has more than one entry point defined</code></td><td>To <code>Main</code> i samme prosjekt, ofte fordi to prosjekter deler mappe</td><td>Gi hvert prosjekt sin egen mappe</td></tr>
+          <tr><td><code>The process cannot access the file …</code> ved rename</td><td>Mappa er i bruk, ofte av Rider selv</td><td>Lukk solution, endre navn i Utforsker, åpne igjen</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section aria-labelledby="sjekk">
+    <h2 id="sjekk">Sjekk deg selv</h2>
+    <p>Svar med egne ord før du åpner svaret.</p>
+    <div>
+      <details>
+        <summary>Både Demo og RockPaperScissors har en klasse som heter <code>Program</code>. Hvorfor krasjer de ikke?</summary>
+        <p>De ligger i hvert sitt prosjekt, som bygges hver for seg, og i hvert sitt namespace. Fullt navn er <code>Demo.Program</code> og <code>RockPaperScissors.Program</code>.</p>
+      </details>
+      <details>
+        <summary>Du skriver <code>using Demo;</code> i RockPaperScissors, men får fortsatt feil på <code>Player</code>. Hva mangler?</summary>
+        <p>Prosjektreferansen. <code>using</code> er bare en snarvei til navnet. Uten referanse kjenner ikke RockPaperScissors til Demo i det hele tatt.</p>
+      </details>
+      <details>
+        <summary>Du sletter linja med Demo fra <code>.slnx</code>. Hva skjer med koden i <code>Demo/</code>?</summary>
+        <p>Ingenting. Filene ligger der fortsatt. Prosjektet vises bare ikke i Rider lenger, fordi det ikke står i lista.</p>
+      </details>
+    </div>
+  </section>
+
+  <p class="source">Egenprodusert undervisningsmateriell for Intro, emne 3. Utkast laget med hjelp av KI og gjennomgått av faglærer.</p>
+</div>
+</body>
+</html>
