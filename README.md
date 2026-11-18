@@ -1,4 +1,4 @@
-# Intro cheatsheets
+# C# cheatsheet
 
 Oppslagsark for Intro ved GET Academy.
 
